@@ -209,7 +209,11 @@ func (as *AuthServer) ParseRequest(req *http.Request) (*authRequest, error) {
 	}
 	// https://github.com/docker/distribution/blob/1b9ab303a477ded9bdd3fc97e9119fa8f9e58fca/docs/spec/auth/scope.md#resource-scope-grammar
 	if req.FormValue("scope") != "" {
-		for _, scopeStr := range req.Form["scope"] {
+		for _, scopeList := range req.Form["scope"] {
+			scopes := strings.Split(scopeList, " ")
+			sort.Strings(scopes)
+			scopeStr := scopes[len(scopes)-1]
+
 			parts := strings.Split(scopeStr, ":")
 			var scope authScope
 			switch len(parts) {
